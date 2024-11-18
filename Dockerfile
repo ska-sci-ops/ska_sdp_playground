@@ -14,7 +14,7 @@ FROM ubuntu:24.04
     && rm -rf /var/lib/apt/lists/*
 
     # Install commonly used python packages
-    RUN pip install numpy matplotlib astropy ipython notebook --break-system-packages
+    RUN pip install numpy matplotlib astropy ipython pandas notebook --break-system-packages
 
     # Install xradio
-    RUN pip install xradio==0.0.43 --break-system-packages
+    RUN pip install xradio==0.0.44 --break-system-packages
