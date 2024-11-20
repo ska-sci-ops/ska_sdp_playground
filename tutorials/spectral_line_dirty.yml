@@ -1,0 +1,32 @@
+global_parameters: {}
+parameters:
+  imaging:
+    beam_info:
+      bmaj: null
+      bmin: null
+      bpa: null
+    export_format: fits
+    export_model_image: false
+    export_psf_image: false
+    export_residual_image: false
+    gridding_params:
+      cell_size: null
+      epsilon: 0.0001
+      image_size: 256
+      scaling_factor: 3.0
+    image_name: spectral_cube
+    n_iter_major: 0
+    psf_image_path: null
+  load_data:
+    obs_id: 0
+  vis_stokes_conversion:
+    output_polarizations:
+    - I
+pipeline:
+  continuum_subtraction: false
+  flagging: false
+  imaging: true
+  load_data: true
+  predict_stage: false
+  read_model: false
+  vis_stokes_conversion: true
