@@ -1,18 +1,14 @@
-FROM ubuntu:23.04
+FROM python:3.10-slim
 
     ENV DEBIAN_FRONTEND=noninteractive
 
     # Ubuntu apt installs
-    RUN apt-get update \
+    RUN apt update \
     && apt-get --yes install --no-install-recommends \
         build-essential \
         casacore-data \
         casacore-dev \
         cmake \
-        python3-dev \
-        python3-pip \
-        python3-setuptools \
-        python3-casacore \
         wget \
         git \
         libblas-dev \
@@ -20,7 +16,8 @@ FROM ubuntu:23.04
         libboost-program-options-dev libboost-system-dev \
         libcfitsio-dev libfftw3-dev libgsl-dev \
         libhdf5-dev liblapack-dev libopenmpi-dev \
-        libpython3-dev pkg-config \
+        pkg-config \
+        libpng-dev \
     && rm -rf /var/lib/apt/lists/*
 
     # Install commonly used python packages
@@ -40,7 +37,7 @@ FROM ubuntu:23.04
     && cd EveryBeam && git checkout v0.6.0 \
     && mkdir build && cd build \
     && cmake ../ \
-    && make -j $threads && make install \
+    && make -j 8 && make install \
     && cd / && rm -rf EveryBeam
 
     # Install IDG
@@ -50,12 +47,35 @@ FROM ubuntu:23.04
     && cmake \
     -DBUILD_LIB_CUDA=Off \
     ../ \
-    && make && make install && cd / && rm -rf idg
+    && make -j 8 && make install && cd / && rm -rf idg
 
     # Install wsclean
     RUN cd / && git clone https://gitlab.com/aroffringa/wsclean.git \
     && cd wsclean && git checkout v3.5 \
     && mkdir build && cd build \
     && cmake ../ \
-    && make && make install \
+    && make -j 8 && make install \
     && cd / && rm -rf wsclean
+
+    # Install AOFlagger
+    RUN apt update \
+    && apt-get --yes install --no-install-recommends \
+        liblua5.3-dev \ 
+    && rm -rf /var/lib/apt/lists/*
+    RUN cd / && git clone https://gitlab.com/aroffringa/aoflagger \
+    && cd aoflagger && git checkout v3.4.0 \
+    && mkdir build && cd build \
+    && cmake ../ \
+    && make -j 8 && make install \
+    && cd / && rm -rf aoflagger
+
+    # Install DP3
+    RUN cd / && git clone https://github.com/lofar-astron/DP3 \
+    && cd DP3 && git checkout v6.2.1 \
+    && mkdir build && cd build \
+    && cmake ../ \
+    && make -j 8 && make install \
+    && cd / && rm -rf DP3
+
+    # SKA SDP Batch Preprocessing Pipeline
+    RUN pip install --extra-index-url https://artefact.skao.int/repository/pypi-internal/simple ska-sdp-batch-preprocess --break-system-packages
